@@ -39,7 +39,7 @@ class TextViewWithMarkup : TextViewFixed {
         return rawText
     }
 
-    // TODO: Consider getting MainActivity's *VieWModel* here instead
+    // TODO: Consider getting MainActivity's *ViewModel* here instead
     fun followLinkToNoteWithProperty(name: String, value: String) {
         MainActivity.followLinkToNoteWithProperty(name, value)
     }

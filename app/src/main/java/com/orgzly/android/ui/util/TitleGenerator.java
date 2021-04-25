@@ -32,12 +32,12 @@ public class TitleGenerator {
 
     private Context mContext;
     /** Can be in book or search results. */
-    private boolean inBook;
+    private NoteContext context;
     private TitleAttributes attributes;
 
-    public TitleGenerator(Context mContext, boolean inBook, TitleAttributes attributes) {
+    public TitleGenerator(Context mContext, NoteContext context, TitleAttributes attributes) {
         this.mContext = mContext;
-        this.inBook = inBook;
+        this.context = context;
         this.attributes = attributes;
     }
 
@@ -86,7 +86,7 @@ public class TitleGenerator {
         }
 
         /* Inherited tags in search results. */
-        if (!inBook && noteView.hasInheritedTags() && AppPreferences.inheritedTagsInSearchResults(mContext)) {
+        if (context != NoteContext.BOOK && noteView.hasInheritedTags() && AppPreferences.inheritedTagsInSearchResults(mContext)) {
             if (note.hasTags()) {
                 builder.append(INHERITED_TAGS_SEPARATOR);
             } else {
@@ -117,24 +117,26 @@ public class TitleGenerator {
      * Should note's content be displayed if it exists.
      */
     public boolean shouldDisplayContent(Note note) {
-        boolean display = true;
-
-        if (AppPreferences.isNotesContentDisplayedInList(mContext)) { // Content could be displayed in list
-            if (inBook) { // In book, folded
-                if (AppPreferences.isNotesContentFoldable(mContext) && note.getPosition().isFolded()) {
-                    display = false;
-                }
-            } else { // In search results, not displaying content
-                if (!AppPreferences.isNotesContentDisplayedInSearch(mContext)) {
-                    display = false;
-                }
-            }
-
-        } else { // Never displaying content in list
-            display = false;
+        if(!AppPreferences.isNotesContentDisplayedInList(mContext)) {
+            // Don't display content if not in a list.
+            return false;
         }
-
-        return display;
+        else {
+            switch(context) {
+                // For book view, display content any apply:
+                // 1. Folding is disabled.
+                // 2. Note is not folded.
+                case BOOK:
+                    return AppPreferences.isNotesContentFoldable(mContext) ||
+                            !note.getPosition().isFolded();
+                case SEARCH:
+                    return AppPreferences.isNotesContentDisplayedInSearch(mContext);
+                case WIDGET:
+                    return AppPreferences.widgetDisplayContent(mContext);
+                default:
+                    return false;
+            }
+        }
     }
 
     private CharSequence generateTags(List<String> tags) {

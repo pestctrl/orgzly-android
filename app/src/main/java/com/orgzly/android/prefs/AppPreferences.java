@@ -773,6 +773,12 @@ public class AppPreferences {
                 context.getResources().getBoolean(R.bool.pref_default_widget_display_checkmarks));
     }
 
+    public static boolean widgetDisplayContent(Context context) {
+        return getDefaultSharedPreferences(context).getBoolean(
+                context.getResources().getString(R.string.pref_key_widget_display_content),
+                context.getResources().getBoolean(R.bool.pref_default_widget_display_content));
+    }
+
     public static int widgetUpdateFrequency(Context context) {
         return Integer.valueOf(getDefaultSharedPreferences(context).getString(
                 context.getResources().getString(R.string.pref_key_widget_update_frequency),

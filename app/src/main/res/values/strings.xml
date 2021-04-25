@@ -665,6 +665,8 @@
     <string name="display_checkmarks">Display checkmarks</string>
     <string name="display_checkmarks_summary">Allows marking notes as done</string>
 
+    <string name="display_content_in_widgets">Display content in widgets</string>
+
     <string name="last_used">Last used</string>
 
     <string name="note_details_opening_mode">Opening mode</string>

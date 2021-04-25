@@ -18,6 +18,7 @@ import com.orgzly.android.query.user.InternalQueryParser
 import com.orgzly.android.ui.TimeType
 import com.orgzly.android.ui.notes.query.agenda.AgendaItem
 import com.orgzly.android.ui.notes.query.agenda.AgendaItems
+import com.orgzly.android.ui.util.NoteContext
 import com.orgzly.android.ui.util.TitleGenerator
 import com.orgzly.android.util.LogUtils
 import com.orgzly.android.util.UserTimeFormatter
@@ -90,7 +91,7 @@ class ListWidgetService : RemoteViewsService() {
 
             // Refresh title generator (for changed settings)
             val attrs = WidgetStyle.getTitleAttributes(context)
-            titleGenerator = TitleGenerator(context, false, attrs)
+            titleGenerator = TitleGenerator(context, NoteContext.WIDGET, attrs)
 
             val notes = dataRepository.selectNotesFromQuery(query)
 
@@ -176,6 +177,7 @@ class ListWidgetService : RemoteViewsService() {
             val displayPlanningTimes = AppPreferences.displayPlanning(context)
             val displayBookName = AppPreferences.widgetDisplayBookName(context)
             val doneStates = AppPreferences.doneKeywordsSet(context)
+            val displayContent = AppPreferences.widgetDisplayContent(context);
 
             // Title
             row.setTextViewText(R.id.item_list_widget_title, titleGenerator.generateTitle(noteView))
@@ -195,6 +197,14 @@ class ListWidgetService : RemoteViewsService() {
                 row.setViewVisibility(R.id.item_list_widget_closed, View.VISIBLE)
             } else {
                 row.setViewVisibility(R.id.item_list_widget_closed, View.GONE)
+            }
+
+            // Content
+            if (displayContent) {
+                row.setTextViewText(R.id.item_list_widget_content_text, noteView.note.content);
+                row.setViewVisibility(R.id.item_list_widget_content, View.VISIBLE);
+            } else {
+                row.setViewVisibility(R.id.item_list_widget_content, View.GONE);
             }
 
             var scheduled = noteView.scheduledRangeString
